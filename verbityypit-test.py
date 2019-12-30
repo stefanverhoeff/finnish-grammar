@@ -40,12 +40,71 @@ class TestVeritTyypit(unittest.TestCase):
         }
 
         for verb in verbs.keys():
-            verb_type = verbityypit.find_verb_type(verb)
+            verb_type = verbityypit.verb_type(verb)
             print('The verbityyppi for {} is {}'.format(
                 verb, verb_type))
 
             self.assertEqual(verbs[verb], verb_type)
 
+    def test_verb_root(self):
+        self.assertEqual('puhu', verbityypit.verb_root('puhua'))
+        self.assertEqual('vie', verbityypit.verb_root('viedä'))
+        self.assertEqual('mene', verbityypit.verb_root('mennä'))
+        self.assertEqual('halua', verbityypit.verb_root('haluta'))
+        self.assertEqual('valitse', verbityypit.verb_root('valita'))
+        self.assertEqual('venhene', verbityypit.verb_root('venheta'))
+
+    # def test_verb_root_kpt(self):
+    #     # TODO
+    #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
+    #     self.assertEqual('vie', verbityypit.verb_root('viedä'))
+    #     self.assertEqual('men', verbityypit.verb_root('mennä'))
+    #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
+    #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
+    #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
+
+    def test_pronoun_suffix_basic_cases(self):
+        verb = 'puhua'
+        self.assertEqual('n', verbityypit.pronoun_suffix(verb, 'minä'))
+        self.assertEqual('t', verbityypit.pronoun_suffix(verb, 'sinä'))
+        self.assertEqual('u', verbityypit.pronoun_suffix(verb, 'hän'))
+        self.assertEqual('mme', verbityypit.pronoun_suffix(verb, 'me'))
+        self.assertEqual('tte', verbityypit.pronoun_suffix(verb, 'te'))
+        self.assertEqual('vat', verbityypit.pronoun_suffix(verb, 'he'))
+
+    def test_pronoun_suffix_special_cases(self):
+        verb = 'käydä'
+        self.assertEqual('n', verbityypit.pronoun_suffix(verb, 'minä'))
+        self.assertEqual('t', verbityypit.pronoun_suffix(verb, 'sinä'))
+        self.assertEqual('', verbityypit.pronoun_suffix(verb, 'hän'))
+        self.assertEqual('mme', verbityypit.pronoun_suffix(verb, 'me'))
+        self.assertEqual('tte', verbityypit.pronoun_suffix(verb, 'te'))
+        self.assertEqual('vät', verbityypit.pronoun_suffix(verb, 'he'))
+
+    def test_verb_has_front_vowel(self):
+        self.assertTrue(verbityypit.verb_has_front_vowel('käydä'))
+        self.assertTrue(verbityypit.verb_has_front_vowel('ymmärtää'))
+        self.assertTrue(verbityypit.verb_has_front_vowel('käyttää'))
+        self.assertFalse(verbityypit.verb_has_front_vowel('olla'))
+        self.assertFalse(verbityypit.verb_has_front_vowel('muistaa'))
+        self.assertFalse(verbityypit.verb_has_front_vowel('katsoa'))
+
+    def test_verb_has_back_vowel(self):
+        self.assertTrue(verbityypit.verb_has_back_vowel('soittaa'))
+        self.assertTrue(verbityypit.verb_has_back_vowel('harjata'))
+        self.assertTrue(verbityypit.verb_has_back_vowel('puhua'))
+        self.assertFalse(verbityypit.verb_has_back_vowel('nähdä'))
+        self.assertFalse(verbityypit.verb_has_back_vowel('etsiä'))
+        self.assertFalse(verbityypit.verb_has_back_vowel('tehdä'))
+
+# TODO
+    # def test_conjugate_verb_tyyppi1(self):
+    #     self.assertEqual('puhun', verbityypit.conjugate_verb_tyyppi1('puhua', 'minä'))
+    #     self.assertEqual('puhut', verbityypit.conjugate_verb_tyyppi1('puhua', 'sinä'))
+    #     self.assertEqual('puhuu', verbityypit.conjugate_verb_tyyppi1('puhua', 'hän'))
+    #     self.assertEqual('puhumme', verbityypit.conjugate_verb_tyyppi1('puhua', 'me'))
+    #     self.assertEqual('puhutte', verbityypit.conjugate_verb_tyyppi1('puhua', 'te'))
+    #     self.assertEqual('puhuvat', verbityypit.conjugate_verb_tyyppi1('puhua', 'he'))
 
 if __name__ == '__main__':
     unittest.main()

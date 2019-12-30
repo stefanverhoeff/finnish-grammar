@@ -3,15 +3,28 @@
 import sys
 from pprint import pprint
 
+# Vowels: https://en.wikibooks.org/wiki/Finnish/Grammar-Vowel_harmony
+VOWELS_FRONT = list('yöä')
+VOWELS_NEUTRAL = list('ei')
+VOWELS_BACK = list('oau')
+VOWELS = VOWELS_FRONT + VOWELS_NEUTRAL + VOWELS_BACK
+
 print('Finnish verbs are fun!')
 
 
-def find_verb_type(verb):
-    """return verbityyppi as number or None if not a verb"""
-    # Reference: https://thefinnishteacher.weebly.com/verbityypit-ja-preesens--verb-types-and-the-present-tense.html
-    vowels = list('eyuioaöä')
+def verb_has_front_vowel(verb):
+    return True in [vowel in verb for vowel in VOWELS_FRONT]
 
-    if verb[-2] in vowels and verb[-1] in vowels:
+
+def verb_has_back_vowel(verb):
+    return True in [vowel in verb for vowel in VOWELS_BACK]
+
+
+def verb_type(verb):
+    """Return verbityyppi as number or None if not a verb"""
+    # Reference: https://thefinnishteacher.weebly.com/verbityypit-ja-preesens--verb-types-and-the-present-tense.html
+
+    if verb[-2] in VOWELS and verb[-1] in VOWELS:
         return 1
     if verb[-2:] in ['da', 'dä']:
         return 2
@@ -27,12 +40,63 @@ def find_verb_type(verb):
     return None
 
 
+def verb_root(verb):
+    "Root of verb (vartalo), with KPT applied except for type 1"
+    verbityypi = verb_type(verb)
+
+    if verbityypi == 1:
+        # Not applying KPT transformation yet on root,
+        # because it differs on the form used
+        return verb[:-1]
+    if verbityypi == 2:
+        return verb[:-2]
+    if verbityypi == 3:
+        return verb[:-2] + 'e'
+    if verbityypi == 4:
+        return verb[:-2] + verb[-1]
+    if verbityypi == 5:
+        return verb[:-1] + 'se'
+    if verbityypi == 6:
+        return verb[:-2] + 'ne'
+
+    return None
+
+
+def pronoun_suffix(verb, pronoun):
+    verbityypi = verb_type(verb)
+
+    if pronoun == 'minä':
+        return 'n'
+    if pronoun == 'sinä':
+        return 't'
+    if pronoun == 'hän' and verbityypi == 2:
+        return ''
+    if pronoun == 'hän' and verbityypi != 2:
+        return verb_root(verb)[-1]
+    if pronoun == 'me':
+        return 'mme'
+    if pronoun == 'te':
+        return 'tte'
+    # TODO: handle compound words (is that common for verbs?)
+    if pronoun == 'he' and verb_has_back_vowel(verb):
+        return 'vat'
+    if pronoun == 'he' and not verb_has_back_vowel(verb):
+        return 'vät'
+
+    return None
+
+
+def conjugate_verb_tyyppi1(verb, pronoun):
+    # WIP
+    return None
+
+
 def main():
     verb = 'olla'
     if len(sys.argv) > 1:
         verb = sys.argv[1].lower().strip()
 
-    verb_type = find_verb_type(verb)
+    verb_type = verb_type(verb)
     print('The verbityyppi for {} is {}'.format(
         verb, verb_type))
 
