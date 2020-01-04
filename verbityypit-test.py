@@ -54,7 +54,7 @@ class TestVeritTyypit(unittest.TestCase):
         self.assertEqual('valitse', verbityypit.verb_root('valita'))
         self.assertEqual('venhene', verbityypit.verb_root('venheta'))
 
-    # def test_verb_root_kpt(self):
+    # def test_verb_root_kpt_strong_to_weak(self):
     #     # TODO
     #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
     #     self.assertEqual('vie', verbityypit.verb_root('viedä'))
@@ -62,6 +62,29 @@ class TestVeritTyypit(unittest.TestCase):
     #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
     #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
     #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
+
+    def test_kpt_strong_to_weak(self):
+        self.assertEqual('panki', verbityypit.kpt_strong_to_weak('pankki'))
+        self.assertEqual('kaupa', verbityypit.kpt_strong_to_weak('kauppa'))
+        self.assertEqual('kato', verbityypit.kpt_strong_to_weak('katto'))
+        self.assertEqual('joi', verbityypit.kpt_strong_to_weak('joki'))
+        self.assertEqual('halva', verbityypit.kpt_strong_to_weak('halpa'))
+        self.assertEqual('pöydä', verbityypit.kpt_strong_to_weak('pöytä'))
+        self.assertEqual('parra', verbityypit.kpt_strong_to_weak('parta'))
+        self.assertEqual('silla', verbityypit.kpt_strong_to_weak('silta'))
+        self.assertEqual('ranna', verbityypit.kpt_strong_to_weak('ranta'))
+        self.assertEqual('Helsingi', verbityypit.kpt_strong_to_weak('Helsinki'))
+        self.assertEqual('kamma', verbityypit.kpt_strong_to_weak('kampa'))
+
+    # TODO KPT Edge cases:
+    # don't match beginning/end of word
+    # multiple matches of same transformation in a string
+    # multiple different transformations in a string
+    # do kk, pp, tt etc before k, p, t
+    # compound words, only KPT is some parts?
+
+    # TODO: KPT weak to strong
+
 
     def test_pronoun_suffix_basic_cases(self):
         verb = 'puhua'

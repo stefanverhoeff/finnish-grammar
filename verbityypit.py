@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import re
 import sys
 from pprint import pprint
 
@@ -8,6 +9,19 @@ VOWELS_FRONT = list('yöä')
 VOWELS_NEUTRAL = list('ei')
 VOWELS_BACK = list('oau')
 VOWELS = VOWELS_FRONT + VOWELS_NEUTRAL + VOWELS_BACK
+KPT_STRONG_TO_WEAK = [
+    ('kk', 'k'),
+    ('pp', 'p'),
+    ('tt', 't'),
+    ('rt', 'rr'),
+    ('lt', 'll'),
+    ('nt', 'nn'),
+    ('nk', 'ng'),
+    ('mp', 'mm'),
+    ('k', ''),
+    ('p', 'v'),
+    ('t', 'd'),
+]
 
 print('Finnish verbs are fun!')
 
@@ -41,12 +55,10 @@ def verb_type(verb):
 
 
 def verb_root(verb):
-    "Root of verb (vartalo), with KPT applied except for type 1"
+    "Root of verb (vartalo), without KPT applied"
     verbityypi = verb_type(verb)
 
     if verbityypi == 1:
-        # Not applying KPT transformation yet on root,
-        # because it differs on the form used
         return verb[:-1]
     if verbityypi == 2:
         return verb[:-2]
@@ -60,6 +72,26 @@ def verb_root(verb):
         return verb[:-2] + 'ne'
 
     return None
+
+
+def kpt_strong_to_weak(word):
+    # Don't transform first+last character
+    first_char = word[0]
+    last_char = word[-1]
+    middle = word[1:-1]
+
+    for search, replacement in KPT_STRONG_TO_WEAK:
+        if search in middle:
+            middle = middle.replace(search, replacement)
+            # FIXME: Only do wrong transformation per word, probably wrong assumption
+            # Need more sophisticated algorythm
+            break
+
+    return first_char + middle + last_char
+
+
+def kpt_reversed(word):
+    None
 
 
 def pronoun_suffix(verb, pronoun):
