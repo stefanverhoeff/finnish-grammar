@@ -24,3 +24,4 @@ Dev:
 
 - Refactor split into library and CLI entrypoint
 - Crawl 1000 conjugated verbs + nouns as test set
+- CI with unit tests and PyLint

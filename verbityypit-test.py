@@ -41,10 +41,11 @@ class TestVeritTyypit(unittest.TestCase):
 
         for verb in verbs.keys():
             verb_type = verbityypit.verb_type(verb)
-            print('The verbityyppi for {} is {}'.format(
-                verb, verb_type))
+            # print('The verbityyppi for {} is {}'.format(
+            #     verb, verb_type))
 
             self.assertEqual(verbs[verb], verb_type)
+
 
     def test_verb_root(self):
         self.assertEqual('puhu', verbityypit.verb_root('puhua'))
@@ -54,14 +55,6 @@ class TestVeritTyypit(unittest.TestCase):
         self.assertEqual('valitse', verbityypit.verb_root('valita'))
         self.assertEqual('venhene', verbityypit.verb_root('venheta'))
 
-    # def test_verb_root_kpt_strong_to_weak(self):
-    #     # TODO
-    #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
-    #     self.assertEqual('vie', verbityypit.verb_root('viedä'))
-    #     self.assertEqual('men', verbityypit.verb_root('mennä'))
-    #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
-    #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
-    #     self.assertEqual('puhu', verbityypit.verb_root('puhua'))
 
     def test_kpt_strong_to_weak(self):
         self.assertEqual('panki', verbityypit.kpt_strong_to_weak('pankki'))
@@ -73,17 +66,39 @@ class TestVeritTyypit(unittest.TestCase):
         self.assertEqual('parra', verbityypit.kpt_strong_to_weak('parta'))
         self.assertEqual('silla', verbityypit.kpt_strong_to_weak('silta'))
         self.assertEqual('ranna', verbityypit.kpt_strong_to_weak('ranta'))
-        self.assertEqual('Helsingi', verbityypit.kpt_strong_to_weak('Helsinki'))
+        self.assertEqual('helsingi', verbityypit.kpt_strong_to_weak('helsinki'))
         self.assertEqual('kamma', verbityypit.kpt_strong_to_weak('kampa'))
 
-    # TODO KPT Edge cases:
-    # don't match beginning/end of word
-    # multiple matches of same transformation in a string
-    # multiple different transformations in a string
-    # do kk, pp, tt etc before k, p, t
-    # compound words, only KPT is some parts?
 
-    # TODO: KPT weak to strong
+    def test_kpt_weak_to_strong(self):
+        # FIXME: cases are not real... get some actual cases
+        self.assertEqual('pankki', verbityypit.kpt_weak_to_strong('panki'))
+        self.assertEqual('kauppa', verbityypit.kpt_weak_to_strong('kaupa'))
+        self.assertEqual('katto', verbityypit.kpt_weak_to_strong('kato'))
+        self.assertEqual('joi', verbityypit.kpt_weak_to_strong('joi'))
+        self.assertEqual('halpa', verbityypit.kpt_weak_to_strong('halva'))
+        self.assertEqual('pöytä', verbityypit.kpt_weak_to_strong('pöydä'))
+        self.assertEqual('parta', verbityypit.kpt_weak_to_strong('parra'))
+        self.assertEqual('silta', verbityypit.kpt_weak_to_strong('silla'))
+        self.assertEqual('ranta', verbityypit.kpt_weak_to_strong('ranna'))
+        self.assertEqual('helsinki', verbityypit.kpt_weak_to_strong('helsingi'))
+        self.assertEqual('kampa', verbityypit.kpt_weak_to_strong('kamma'))
+
+
+    def test_kpt_dont_match_beginning_or_end(self):
+        # Don't match beginning/end of word
+        self.assertEqual('kk', verbityypit.kpt_strong_to_weak('kk'))
+        self.assertEqual('kk', verbityypit.kpt_strong_to_weak('kkk'))
+        self.assertEqual('pp', verbityypit.kpt_strong_to_weak('pp'))
+        self.assertEqual('kp', verbityypit.kpt_strong_to_weak('kp'))
+        self.assertEqual('krandomp', verbityypit.kpt_strong_to_weak('krandomp'))
+        self.assertEqual('kink', verbityypit.kpt_strong_to_weak('kink'))
+
+
+    # TODO KPT Edge cases:
+    # multiple matches of same transformation in a string (does that happen?)
+    # multiple different transformations in a string (does that happen?)
+    # compound words, only KPT in some parts?
 
 
     def test_pronoun_suffix_basic_cases(self):
@@ -95,6 +110,7 @@ class TestVeritTyypit(unittest.TestCase):
         self.assertEqual('tte', verbityypit.pronoun_suffix(verb, 'te'))
         self.assertEqual('vat', verbityypit.pronoun_suffix(verb, 'he'))
 
+
     def test_pronoun_suffix_special_cases(self):
         verb = 'käydä'
         self.assertEqual('n', verbityypit.pronoun_suffix(verb, 'minä'))
@@ -104,6 +120,7 @@ class TestVeritTyypit(unittest.TestCase):
         self.assertEqual('tte', verbityypit.pronoun_suffix(verb, 'te'))
         self.assertEqual('vät', verbityypit.pronoun_suffix(verb, 'he'))
 
+
     def test_verb_has_front_vowel(self):
         self.assertTrue(verbityypit.verb_has_front_vowel('käydä'))
         self.assertTrue(verbityypit.verb_has_front_vowel('ymmärtää'))
@@ -111,6 +128,7 @@ class TestVeritTyypit(unittest.TestCase):
         self.assertFalse(verbityypit.verb_has_front_vowel('olla'))
         self.assertFalse(verbityypit.verb_has_front_vowel('muistaa'))
         self.assertFalse(verbityypit.verb_has_front_vowel('katsoa'))
+
 
     def test_verb_has_back_vowel(self):
         self.assertTrue(verbityypit.verb_has_back_vowel('soittaa'))
@@ -120,14 +138,42 @@ class TestVeritTyypit(unittest.TestCase):
         self.assertFalse(verbityypit.verb_has_back_vowel('etsiä'))
         self.assertFalse(verbityypit.verb_has_back_vowel('tehdä'))
 
-# TODO
-    # def test_conjugate_verb_tyyppi1(self):
-    #     self.assertEqual('puhun', verbityypit.conjugate_verb_tyyppi1('puhua', 'minä'))
-    #     self.assertEqual('puhut', verbityypit.conjugate_verb_tyyppi1('puhua', 'sinä'))
-    #     self.assertEqual('puhuu', verbityypit.conjugate_verb_tyyppi1('puhua', 'hän'))
-    #     self.assertEqual('puhumme', verbityypit.conjugate_verb_tyyppi1('puhua', 'me'))
-    #     self.assertEqual('puhutte', verbityypit.conjugate_verb_tyyppi1('puhua', 'te'))
-    #     self.assertEqual('puhuvat', verbityypit.conjugate_verb_tyyppi1('puhua', 'he'))
+
+    def test_conjugate_verb_tyyppi1(self):
+        verb = 'puhua'
+        self.assertEqual('puhun', verbityypit.conjugate_verb_tyyppi1(verb, 'minä'))
+        self.assertEqual('puhut', verbityypit.conjugate_verb_tyyppi1(verb, 'sinä'))
+        self.assertEqual('puhuu', verbityypit.conjugate_verb_tyyppi1(verb, 'hän'))
+        self.assertEqual('puhumme', verbityypit.conjugate_verb_tyyppi1(verb, 'me'))
+        self.assertEqual('puhutte', verbityypit.conjugate_verb_tyyppi1(verb, 'te'))
+        self.assertEqual('puhuvat', verbityypit.conjugate_verb_tyyppi1(verb, 'he'))
+
+
+    def test_conjugate_verb_tyyppi1_kpt(self):
+        verb = 'kirjoittaa'
+        self.assertEqual('kirjoitan', verbityypit.conjugate_verb_tyyppi1(verb, 'minä'))
+        self.assertEqual('kirjoitat', verbityypit.conjugate_verb_tyyppi1(verb, 'sinä'))
+        self.assertEqual('kirjoittaa', verbityypit.conjugate_verb_tyyppi1(verb, 'hän'))
+        self.assertEqual('kirjoitamme', verbityypit.conjugate_verb_tyyppi1(verb, 'me'))
+        self.assertEqual('kirjoitatte', verbityypit.conjugate_verb_tyyppi1(verb, 'te'))
+        self.assertEqual('kirjoittavat', verbityypit.conjugate_verb_tyyppi1(verb, 'he'))
+
+        verb = 'lukea'
+        self.assertEqual('luen', verbityypit.conjugate_verb_tyyppi1(verb, 'minä'))
+        self.assertEqual('luet', verbityypit.conjugate_verb_tyyppi1(verb, 'sinä'))
+        self.assertEqual('lukee', verbityypit.conjugate_verb_tyyppi1(verb, 'hän'))
+        self.assertEqual('luemme', verbityypit.conjugate_verb_tyyppi1(verb, 'me'))
+        self.assertEqual('luette', verbityypit.conjugate_verb_tyyppi1(verb, 'te'))
+        self.assertEqual('lukevat', verbityypit.conjugate_verb_tyyppi1(verb, 'he'))
+
+        verb = 'ymmärtää'
+        self.assertEqual('ymmärrän', verbityypit.conjugate_verb_tyyppi1(verb, 'minä'))
+        self.assertEqual('ymmärrät', verbityypit.conjugate_verb_tyyppi1(verb, 'sinä'))
+        self.assertEqual('ymmärtää', verbityypit.conjugate_verb_tyyppi1(verb, 'hän'))
+        self.assertEqual('ymmärrämme', verbityypit.conjugate_verb_tyyppi1(verb, 'me'))
+        self.assertEqual('ymmärrätte', verbityypit.conjugate_verb_tyyppi1(verb, 'te'))
+        self.assertEqual('ymmärtävät', verbityypit.conjugate_verb_tyyppi1(verb, 'he'))
+
 
 if __name__ == '__main__':
     unittest.main()

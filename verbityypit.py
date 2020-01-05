@@ -22,6 +22,7 @@ KPT_STRONG_TO_WEAK = [
     ('p', 'v'),
     ('t', 'd'),
 ]
+KPT_WEAK_TO_STRONG = [ (b, a) for a, b in KPT_STRONG_TO_WEAK if b != '']
 
 print('Finnish verbs are fun!')
 
@@ -75,12 +76,23 @@ def verb_root(verb):
 
 
 def kpt_strong_to_weak(word):
+    return transform_word_with(word, KPT_STRONG_TO_WEAK)
+
+
+def kpt_weak_to_strong(word):
+    return transform_word_with(word, KPT_WEAK_TO_STRONG)
+
+
+def transform_word_with(word, transformations):
+    assert len(word) > 1, "word should be at least 2 chars long"
+    assert not re.search(r'[A-Z]+', word), f"only lowercase chars expected, found capitals in '{word}'"
+
     # Don't transform first+last character
     first_char = word[0]
     last_char = word[-1]
     middle = word[1:-1]
 
-    for search, replacement in KPT_STRONG_TO_WEAK:
+    for search, replacement in transformations:
         if search in middle:
             middle = middle.replace(search, replacement)
             # FIXME: Only do wrong transformation per word, probably wrong assumption
@@ -88,10 +100,6 @@ def kpt_strong_to_weak(word):
             break
 
     return first_char + middle + last_char
-
-
-def kpt_reversed(word):
-    None
 
 
 def pronoun_suffix(verb, pronoun):
@@ -119,8 +127,15 @@ def pronoun_suffix(verb, pronoun):
 
 
 def conjugate_verb_tyyppi1(verb, pronoun):
-    # WIP
-    return None
+    root = verb_root(verb)
+    suffix = pronoun_suffix(verb, pronoun)
+
+    if pronoun != 'hän' and pronoun != 'he':
+        root = kpt_strong_to_weak(root)
+
+    conjugated_verb = root + suffix
+
+    return conjugated_verb
 
 
 def main():
